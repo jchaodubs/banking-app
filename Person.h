@@ -7,7 +7,6 @@ class Person {
 private:
   std::string name;
   std::string password;
-  bool isChildAccount{};
   double bal{};
 
 public:
@@ -27,7 +26,6 @@ public:
   void send(std::string username, double amount) {}
   std::string getName() { return this->name; }
   std::string getPassword() { return this->password; }
-  bool getIsChildAccount() { return this->isChildAccount; }
   double getBalance() { return this->bal; }
   bool equals(Person person) {
     return (this->name == person.getName() &&
@@ -38,11 +36,14 @@ public:
 static Person parse(std::string rawUserData) {
   std::string name{};
   std::string password{};
+  double bal{};
   std::smatch regexMatches;
   std::regex_search(rawUserData, regexMatches, regexPattern);
   name = regexMatches[1];
   password = regexMatches[2];
+  bal = std::stod(regexMatches[3]);
   Person person = Person(name, password);
+  person.deposit(bal);
   return person;
 }
 static std::string parseUsername(std::string rawUsername) {
@@ -51,4 +52,8 @@ static std::string parseUsername(std::string rawUsername) {
   std::regex_search(rawUsername, regexMatches, regexPattern);
   name = regexMatches[1];
   return name;
+}
+static Person createPersonFromRawData(std::string rawUserData) {
+  Person newPerson = parse(rawUserData);
+  return newPerson;
 }

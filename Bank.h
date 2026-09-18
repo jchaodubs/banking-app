@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 enum Option { DEPOSIT = 1, WITHDRAW, SEND, LOG_OUT, CLOSE_ACCOUNT };
 
@@ -72,8 +73,7 @@ public:
   void saveNewPerson(Person person) {
     std::ofstream usersFile(userDataFile, std::ios::app);
     usersFile << person.getName() << delimiter << person.getPassword()
-              << delimiter << person.getBalance() << delimiter
-              << person.getIsChildAccount() << std::endl;
+              << delimiter << person.getBalance() << delimiter << std::endl;
     usersFile.close();
   }
   bool attemptLogin(std::string username, std::string password) {
@@ -88,6 +88,7 @@ public:
   }
   void login(Person personLoggingIn) {
     user = personLoggingIn;
+    fetchBal(user);
     introduce();
   }
   void introduce() {
@@ -150,6 +151,7 @@ public:
       }
     }
     user.deposit(amount);
+    writeBal(user, user.getBalance());
     std::cout << "Successful. Your new balance is now $" << user.getBalance()
               << std::endl;
   };
@@ -170,6 +172,7 @@ public:
       }
     }
     user.withdraw(amount);
+    writeBal(user, user.getBalance());
     std::cout << "Successful. Your new balance is now $" << user.getBalance()
               << std::endl;
   }
@@ -204,5 +207,42 @@ public:
     user.send(username, amount);
     std::cout << "Successful. Your new balance is now $" << user.getBalance()
               << std::endl;
+  }
+
+  void writeBal(Person person, double amount) {
+    std::vector<std::string> fileContents;
+
+    std::fstream usersFile(userDataFile);
+    std::string rawUserData{};
+    while (std::getline(usersFile, rawUserData)) {
+
+      Person existingUser = parse(rawUserData);
+      if (existingUser.equals(user)) {
+        continue;
+      }
+      fileContents.push_back(rawUserData);
+    }
+    usersFile.close();
+    usersFile.open(userDataFile, std::ios::out | std::ios::trunc);
+    usersFile.close();
+    saveNewPerson(person);
+    for (std::string rawUser : fileContents) {
+      Person person = createPersonFromRawData(rawUser);
+      saveNewPerson(person);
+    }
+  }
+  void fetchBal(Person &person) {
+
+    std::ifstream usersFile(userDataFile);
+    std::string rawUserData{};
+    while (std::getline(usersFile, rawUserData)) {
+      std::cout << rawUserData;
+      Person existingUser = parse(rawUserData);
+      if (existingUser.equals(person)) {
+        person.deposit(existingUser.getBalance());
+        break;
+      }
+    }
+    usersFile.close();
   }
 };
