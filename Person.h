@@ -16,6 +16,14 @@ public:
     this->password = password;
   }
   Person() {};
+  void deposit(double amount) {
+    bal += amount;
+    return;
+  }
+  void withdraw(double amount) {
+    bal -= amount;
+    return;
+  }
   std::string getName() { return this->name; }
   std::string getPassword() { return this->password; }
   bool getIsChildAccount() { return this->isChildAccount; }

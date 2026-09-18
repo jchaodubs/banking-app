@@ -15,12 +15,7 @@ public:
   std::time_t timestamp;
   Bank() {}
   void start() {
-    std::time(&timestamp);
-    std::cout << std::ctime(&timestamp);
-
-    std::cout << "Salutations " << user.getName()
-              << ". What would you like to do today?" << std::endl;
-
+    std::cout << "Your current balance is $" << user.getBalance() << std::endl;
     int option{};
 
     enum Option selectedOption;
@@ -76,7 +71,18 @@ public:
       return false;
     }
   }
-  void login(Person personLoggingIn) { user = personLoggingIn; }
+  void login(Person personLoggingIn) {
+    user = personLoggingIn;
+    introduce();
+  }
+  void introduce() {
+
+    std::time(&timestamp);
+    std::cout << std::ctime(&timestamp);
+
+    std::cout << "Salutations " << user.getName()
+              << ". What would you like to do today?" << std::endl;
+  }
   bool inputIsValid(int option, Option &selectedOption) {
     switch (option) {
     case 1:
@@ -99,5 +105,56 @@ public:
       return false;
     }
   }
-  void executeOption(Option option) { return; }
+  void executeOption(Option option) {
+    switch (option) {
+    case DEPOSIT:
+      depositMoney();
+      start();
+    case WITHDRAW:
+      withdrawMoney();
+      start();
+    case SEND:
+      start();
+    case LOG_OUT:
+      start();
+    case CLOSE_ACCOUNT:
+    default:
+      start();
+    }
+  }
+  void depositMoney() {
+    double amount{};
+    std::cout << "How much would you like to deposit?" << std::endl;
+    while (true) {
+      std::cin >> amount;
+      if (amount < 0) {
+        std::cout << "Uh oh. Error. Try again." << std::endl;
+      } else {
+        break;
+      }
+    }
+    user.deposit(amount);
+    std::cout << "Successful. Your new balance is now $" << user.getBalance()
+              << std::endl;
+  };
+  void withdrawMoney() {
+    double amount{};
+
+    std::cout << "How much would you like to withdraw?" << std::endl;
+
+    while (true) {
+      std::cin >> amount;
+      if (amount < 0) {
+        std::cout << "Uh oh. Error. Try again." << std::endl;
+      } else if (amount > user.getBalance()) {
+        std::cout << "Balance too low. Try again." << std::endl;
+
+      } else {
+        break;
+      }
+    }
+    user.withdraw(amount);
+    std::cout << "Successful. Your new balance is now $" << user.getBalance()
+              << std::endl;
+  }
 };
