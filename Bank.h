@@ -54,6 +54,21 @@ public:
     usersFile.close();
     return false;
   }
+
+  bool alreadyExists(std::string username) {
+    std::ifstream usersFile(userDataFile);
+
+    std::string rawUserData;
+    while (std::getline(usersFile, rawUserData)) {
+      std::string existingUser = parseUsername(rawUserData);
+      if (username == existingUser) {
+        usersFile.close();
+        return true;
+      }
+    }
+    usersFile.close();
+    return false;
+  }
   void saveNewPerson(Person person) {
     std::ofstream usersFile(userDataFile, std::ios::app);
     usersFile << person.getName() << delimiter << person.getPassword()
@@ -114,6 +129,7 @@ public:
       withdrawMoney();
       start();
     case SEND:
+      sendMoney();
       start();
     case LOG_OUT:
       start();
@@ -154,6 +170,38 @@ public:
       }
     }
     user.withdraw(amount);
+    std::cout << "Successful. Your new balance is now $" << user.getBalance()
+              << std::endl;
+  }
+  void sendMoney() {
+    std::string username{};
+    double amount{};
+    std::cout << "Please enter the username of the person you'd like to send "
+                 "money to: ";
+    while (true) {
+      std::cin >> username;
+
+      if (!alreadyExists(username)) {
+        std::cout << "User not found try again." << std::endl;
+      } else {
+        break;
+      }
+    }
+    std::cout << "Please enter the amount you'd like to send: ";
+    while (true) {
+      std::cin >> amount;
+      if (amount < 0) {
+
+        std::cout << "Uh oh. Error. Try again." << std::endl;
+      } else if (amount > user.getBalance()) {
+
+        std::cout << "Balance too low. Try again." << std::endl;
+      } else {
+
+        break;
+      }
+    }
+    user.send(username, amount);
     std::cout << "Successful. Your new balance is now $" << user.getBalance()
               << std::endl;
   }

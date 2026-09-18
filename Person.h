@@ -24,6 +24,7 @@ public:
     bal -= amount;
     return;
   }
+  void send(std::string username, double amount) {}
   std::string getName() { return this->name; }
   std::string getPassword() { return this->password; }
   bool getIsChildAccount() { return this->isChildAccount; }
@@ -43,4 +44,11 @@ static Person parse(std::string rawUserData) {
   password = regexMatches[2];
   Person person = Person(name, password);
   return person;
+}
+static std::string parseUsername(std::string rawUsername) {
+  std::string name{};
+  std::smatch regexMatches;
+  std::regex_search(rawUsername, regexMatches, regexPattern);
+  name = regexMatches[1];
+  return name;
 }
