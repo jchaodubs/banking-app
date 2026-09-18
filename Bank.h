@@ -236,7 +236,6 @@ public:
     std::ifstream usersFile(userDataFile);
     std::string rawUserData{};
     while (std::getline(usersFile, rawUserData)) {
-      std::cout << rawUserData;
       Person existingUser = parse(rawUserData);
       if (existingUser.equals(person)) {
         person.deposit(existingUser.getBalance());
