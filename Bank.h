@@ -147,8 +147,10 @@ public:
     case LOG_OUT:
       return;
     case CLOSE_ACCOUNT:
-      closeAccount();
-      return;
+      if (closeAccount()) {
+        return;
+      }
+
     default:
       start();
     }
@@ -272,11 +274,11 @@ public:
     usersFile.close();
     return existingUser;
   }
-  void closeAccount() {
+  bool closeAccount() {
     if (user.getBalance() > 0) {
 
       std::cout << "Error. Balance must be 0 to close account. " << std::endl;
-      return;
+      return false;
     }
 
     std::vector<std::string> fileContents;
@@ -298,5 +300,6 @@ public:
       Person person = createPersonFromRawData(rawUser);
       saveNewPerson(person);
     }
+    return true;
   }
 };

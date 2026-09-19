@@ -29,7 +29,10 @@ public:
   std::string getName() { return this->name; }
   std::string getPassword() { return this->password; }
   double getBalance() { return this->bal; }
-  bool equals(Person person) { return (this->name == person.getName()); }
+  bool equals(Person person) {
+    return (this->name == person.getName()) &&
+           this->password == person.getPassword();
+  }
 };
 
 static Person parse(std::string rawUserData) {
