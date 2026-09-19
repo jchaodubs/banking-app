@@ -1,4 +1,6 @@
+#pragma once
 #include "Person.h"
+#include "UserController.h"
 #include "keywords.h"
 #include <ctime>
 #include <fstream>
@@ -133,15 +135,20 @@ public:
     case DEPOSIT:
       depositMoney();
       start();
+      break;
     case WITHDRAW:
       withdrawMoney();
       start();
+      break;
     case SEND:
       sendMoney();
       start();
+      break;
     case LOG_OUT:
-      start();
+      return;
     case CLOSE_ACCOUNT:
+      closeAccount();
+      return;
     default:
       start();
     }
@@ -264,5 +271,32 @@ public:
     }
     usersFile.close();
     return existingUser;
+  }
+  void closeAccount() {
+    if (user.getBalance() > 0) {
+
+      std::cout << "Error. Balance must be 0 to close account. " << std::endl;
+      return;
+    }
+
+    std::vector<std::string> fileContents;
+
+    std::fstream usersFile(userDataFile);
+    std::string rawUserData{};
+    while (std::getline(usersFile, rawUserData)) {
+
+      Person existingUser = parse(rawUserData);
+      if (existingUser.equals(user)) {
+        continue;
+      }
+      fileContents.push_back(rawUserData);
+    }
+    usersFile.close();
+    usersFile.open(userDataFile, std::ios::out | std::ios::trunc);
+    usersFile.close();
+    for (std::string rawUser : fileContents) {
+      Person person = createPersonFromRawData(rawUser);
+      saveNewPerson(person);
+    }
   }
 };

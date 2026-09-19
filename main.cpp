@@ -16,5 +16,8 @@ std::string delimiter = ":%:";
 std::regex regexPattern("(.*):%:(.*):%:(.*):%:(.*)");
 int main() {
   UserController Controller;
-  Controller.start();
+  while (1) {
+
+    Controller.start();
+  }
 }

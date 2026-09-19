@@ -1,3 +1,4 @@
+#pragma once
 #include "Bank.h"
 #include "keywords.h"
 #include <iostream>

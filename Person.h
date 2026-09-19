@@ -1,3 +1,4 @@
+#pragma once
 #include "keywords.h"
 #include <iostream>
 #include <regex>
