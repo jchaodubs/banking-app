@@ -15,6 +15,8 @@ public:
     this->password = password;
   }
   Person() {};
+
+  std::string userDataFile = "userData.txt";
   void deposit(double amount) {
     bal += amount;
     return;
@@ -23,14 +25,10 @@ public:
     bal -= amount;
     return;
   }
-  void send(std::string username, double amount) {}
   std::string getName() { return this->name; }
   std::string getPassword() { return this->password; }
   double getBalance() { return this->bal; }
-  bool equals(Person person) {
-    return (this->name == person.getName() &&
-            this->password == person.getPassword());
-  }
+  bool equals(Person person) { return (this->name == person.getName()); }
 };
 
 static Person parse(std::string rawUserData) {

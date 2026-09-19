@@ -30,7 +30,14 @@ public:
     } while (!inputIsValid(option, selectedOption));
     executeOption(selectedOption);
   }
+  void send(std::string username, double amount) {
+    user.withdraw(amount);
+    writeBal(user, user.getBalance());
+    Person recipient = getPersonFromUsername(username);
+    recipient.deposit(amount);
 
+    writeBal(recipient, recipient.getBalance());
+  }
   std::string createAccount(std::string username, std::string password) {
     Person person = Person(username, password);
     if (alreadyExists(person)) {
@@ -204,7 +211,7 @@ public:
         break;
       }
     }
-    user.send(username, amount);
+    send(username, amount);
     std::cout << "Successful. Your new balance is now $" << user.getBalance()
               << std::endl;
   }
@@ -217,7 +224,7 @@ public:
     while (std::getline(usersFile, rawUserData)) {
 
       Person existingUser = parse(rawUserData);
-      if (existingUser.equals(user)) {
+      if (existingUser.equals(person)) {
         continue;
       }
       fileContents.push_back(rawUserData);
@@ -243,5 +250,19 @@ public:
       }
     }
     usersFile.close();
+  }
+  Person getPersonFromUsername(std::string username) {
+    std::ifstream usersFile(userDataFile);
+    std::string rawUserData;
+    Person existingUser;
+    while (std::getline(usersFile, rawUserData)) {
+      existingUser = parse(rawUserData);
+      if (existingUser.getName() == username) {
+        usersFile.close();
+        return existingUser;
+      }
+    }
+    usersFile.close();
+    return existingUser;
   }
 };
